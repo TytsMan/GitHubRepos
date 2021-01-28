@@ -11,7 +11,6 @@ import PureLayout
 
 final class RepositoryDetailController: UIViewController {
 
-    private var didSetupConstraints = false
     private var repository: Repository? {
         didSet {
             tableView.reloadData()
@@ -38,6 +37,8 @@ final class RepositoryDetailController: UIViewController {
         super.updateViewConstraints()
     }
 
+    private var didSetupConstraints = false
+
     // MARK: - Public
     func confugire(with repository: Repository) {
         self.repository = repository
@@ -50,9 +51,11 @@ final class RepositoryDetailController: UIViewController {
 
         tableView.register(DetailCell.self, forCellReuseIdentifier: String(describing: DetailCell.self))
         tableView.dataSource = self
+
         view.addSubview(tableView)
         view.setNeedsUpdateConstraints()
     }
+
 }
 
 // MARK: - UITableViewDataSource
@@ -65,7 +68,10 @@ extension RepositoryDetailController: UITableViewDataSource {
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: DetailCell.self),
                                                      for: indexPath) as? DetailCell,
-            let repository = repository else { fatalError("Can't dequeue cell type DetailCell") }
+            let repository = repository
+            else {
+                fatalError("Can't dequeue cell type DetailCell")
+        }
 
         switch indexPath.row {
         case 0:
@@ -88,4 +94,5 @@ extension RepositoryDetailController: UITableViewDataSource {
 
         return cell
     }
+
 }

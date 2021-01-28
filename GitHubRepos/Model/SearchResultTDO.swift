@@ -9,6 +9,7 @@
 import Foundation
 
 struct SearchResultWrapperTDO<T: Codable>: Codable {
+
     let totalCount: Int
     let incompleteResults: Bool
     let items: [T]
@@ -18,4 +19,5 @@ struct SearchResultWrapperTDO<T: Codable>: Codable {
         case incompleteResults = "incomplete_results"
         case items
     }
+
 }

@@ -9,6 +9,7 @@
 // languagelanguageimport Foundation
 
 struct RepositoryTDO: Codable {
+
     let repositoryID: Int
     let nodeID, name, fullName: String
     let owner: UserTDO
@@ -61,4 +62,5 @@ struct RepositoryTDO: Codable {
         case hasDownloads = "has_downloads"
         case archived, disabled
     }
+
 }

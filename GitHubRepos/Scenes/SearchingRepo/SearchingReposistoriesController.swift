@@ -24,17 +24,11 @@ final class SearchingReposistoriesController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .clear
         collectionView.contentInsetAdjustmentBehavior = .always
-        collectionView.register(GitRepositoryCell.self,
-                                forCellWithReuseIdentifier: String(describing: GitRepositoryCell.self))
-        collectionView.delegate = self
-        collectionView.dataSource = self
         return collectionView
     }()
 
     lazy var searchController: UISearchController = {
         let searchController = UISearchController()
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.sizeToFit()
@@ -45,7 +39,6 @@ final class SearchingReposistoriesController: UIViewController {
             [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 0.143222779, green: 0.1625339985, blue: 0.1780804992, alpha: 1)], for: .selected)
         searchController.searchBar.setScopeBarButtonTitleTextAttributes(
             [NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
-        searchController.searchBar.placeholder = "Enter repo name"
         return searchController
     }()
 
@@ -64,7 +57,6 @@ final class SearchingReposistoriesController: UIViewController {
     }
 
     override func updateViewConstraints() {
-
         if !didSetupConstraints {
             NSLayoutConstraint.autoSetIdentifier("collection view constraint") {
                 collectionView.autoPinEdge(toSuperviewSafeArea: .top)
@@ -91,7 +83,16 @@ final class SearchingReposistoriesController: UIViewController {
         definesPresentationContext = true
         extendedLayoutIncludesOpaqueBars = true
         navigationItem.searchController = searchController
-        title = "Repositories"
+        title = "Repositories" // consts, yeah
+        searchController.searchBar.placeholder = "Enter repo name"
+
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+
+        collectionView.register(GitRepositoryCell.self,
+                                forCellWithReuseIdentifier: String(describing: GitRepositoryCell.self))
+        collectionView.delegate = self
+        collectionView.dataSource = self
 
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
@@ -144,23 +145,23 @@ final class SearchingReposistoriesController: UIViewController {
 
                     //                 request limit 60, потрачено
                     /*DispatchQueue.concurrentPerform(iterations: result.items.count) { [weak self](iteration) in
-                     guard let weakSelf = self else { return }
-                     let repo = weakSelf.repositories[iteration]
-                     weakSelf.networkService.getRepoLanguages(user: repo.owner.login,
-                     repoName: repo.name) { (responseLanguages) in
-                     switch responseLanguages {
-                     case .failure(let error):
-                     print(error.localizedDescription)
-                     case .success(let languages):
-                     if languages.count > 1 {
-                     weakSelf.repositories[iteration].language =
-                     languages.reduce("", { (res, dict) -> String in
-                     return res + (res.isEmpty ? "" : ", ") + dict.key
-                     })
-                     }
-                     }
-                     }
-                     }*/
+                        guard let weakSelf = self else { return }
+                        let repo = weakSelf.repositories[iteration]
+                        weakSelf.networkService.getRepoLanguages(user: repo.owner.login,
+                                                                 repoName: repo.name) { (responseLanguages) in
+                                                                    switch responseLanguages {
+                                                                    case .failure(let error):
+                                                                        print(error.localizedDescription)
+                                                                    case .success(let languages):
+                                                                        if languages.count > 1 {
+                                                                            weakSelf.repositories[iteration].language =
+                                                                                languages.reduce("", { (res, dict) -> String in
+                                                                                    return res + (res.isEmpty ? "" : ", ") + dict.key
+                                                                                })
+                                                                        }
+                                                                    }
+                        }
+                    }*/
                 }
             }
 
@@ -181,10 +182,6 @@ extension SearchingReposistoriesController: UISearchResultsUpdating {
 // MARK: - UISearchBarDelegate
 extension SearchingReposistoriesController: UISearchBarDelegate {
 
-//    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-//        fetchRepos()
-//    }
-
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         searchResult = nil
@@ -202,9 +199,10 @@ extension SearchingReposistoriesController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: String(describing: GitRepositoryCell.self),
-            for: indexPath) as? GitRepositoryCell,
+        guard
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: String(describing: GitRepositoryCell.self),
+                for: indexPath) as? GitRepositoryCell,
             let repository = searchResult?.items[indexPath.row]
             else {
                 fatalError("Can't dequeue cell with type GitRepositoryCell")
@@ -219,9 +217,8 @@ extension SearchingReposistoriesController: UICollectionViewDataSource {
 extension SearchingReposistoriesController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let repository = searchResult?.items[indexPath.row]
-            else {
-                return
+        guard let repository = searchResult?.items[indexPath.row] else {
+            return
         }
         let repoDetail = RepositoryDetailController()
         repoDetail.confugire(with: repository)

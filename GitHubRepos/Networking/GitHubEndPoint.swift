@@ -90,12 +90,10 @@ enum GitHubEndPoint: URLRequestConvertible {
     }
 
     func asURLRequest() throws -> URLRequest {
-
         let baseUrl = try Constants.baseUrl.asURL()
         var urlRequest = URLRequest(url: baseUrl.appendingPathComponent(path))
         urlRequest.httpMethod = method.rawValue
-//        urlRequest?.headers = headers
-
+        urlRequest.headers = headers
         return try encoding.encode(urlRequest, with: parameters)
     }
 

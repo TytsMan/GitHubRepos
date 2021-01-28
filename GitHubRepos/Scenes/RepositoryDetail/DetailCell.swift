@@ -11,7 +11,6 @@ import PureLayout
 
 final class DetailCell: UITableViewCell {
 
-    private var didSetupConstraints = false
     private var propertyName: String? {
         didSet {
             propertyNameLabel.text = propertyName
@@ -44,6 +43,8 @@ final class DetailCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
     }
+
+    private var didSetupConstraints = false
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

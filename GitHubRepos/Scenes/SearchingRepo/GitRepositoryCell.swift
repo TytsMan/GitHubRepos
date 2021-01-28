@@ -78,7 +78,6 @@ final class GitRepositoryCell: UICollectionViewCell {
         stack.axis = .horizontal
         stack.spacing = itemSpacing.left
         stack.distribution = .equalSpacing
-
         return stack
     }()
 
@@ -88,7 +87,6 @@ final class GitRepositoryCell: UICollectionViewCell {
         stack.axis = .horizontal
         stack.spacing = itemSpacing.left
         stack.distribution = .equalSpacing
-
         return stack
     }()
 
@@ -98,7 +96,6 @@ final class GitRepositoryCell: UICollectionViewCell {
         stack.axis = .vertical
         stack.spacing = itemSpacing.left
         stack.distribution = .equalCentering
-
         return stack
     }()
 
@@ -114,7 +111,7 @@ final class GitRepositoryCell: UICollectionViewCell {
     private lazy var leftSileLabelsMaxWidth: CGFloat =
         UIScreen.main.bounds.width
             - rightSideLabelsMaxWidth
-            - (edgesInsets.left * 5)
+            - (edgesInsets.left * 5) // spacing Magic
     let imageSize = CGSize(width: 20, height: 20)
 
     override init(frame: CGRect) {
@@ -131,7 +128,9 @@ final class GitRepositoryCell: UICollectionViewCell {
         // swiftlint:disable line_length
         if !didSetupConstraints {
 
-            contentView.autoPinEdgesToSuperviewEdges(with: .zero)
+            contentView.translatesAutoresizingMaskIntoConstraints = false
+            contentView.autoPinEdgesToSuperviewEdges(with: .zero) // doesn't works???
+
             NSLayoutConstraint.autoSetIdentifier("counter constraint") {
                 (images as NSArray).autoSetViewsDimensions(to: imageSize)
                 (rightSileLabels as NSArray).autoSetViewsDimension(.width, toSize: rightSideLabelsMaxWidth)
@@ -161,39 +160,37 @@ final class GitRepositoryCell: UICollectionViewCell {
                 repoLanguagesLabel.autoPinEdge(.right, to: .left, of: counterStack, withOffset: -itemSpacing.right)
                 repoLanguagesLabel.autoPinEdge(.top, to: .bottom, of: fullRepoNameLabel, withOffset: 0, relation: .greaterThanOrEqual)
             }
+
             didSetupConstraints = true
         }
+
         super.updateConstraints()
         // swiftlint:enable line_length
     }
 
     // MARK: - Public
     func configure(with repo: Repository) {
-
         repoNameLabel.text = repo.name
         fullRepoNameLabel.text = repo.fullName
         repoLanguagesLabel.text = repo.language
         starredCounterLabel.text = format(counter: repo.stargazersCount)
         forkedCounterLabel.text = format(counter: repo.forksCount)
-
     }
 
     // MARK: - Private
     private func setupView() {
-
-        contentView.translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 16
         layer.masksToBounds = true
         layer.shadowOffset = CGSize(width: 1.5, height: 4.0)
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.8
         layer.backgroundColor = UIColor.white.cgColor
+
         contentView.addSubview(counterStack)
         contentView.addSubview(repoNameLabel)
         contentView.addSubview(fullRepoNameLabel)
         contentView.addSubview(repoLanguagesLabel)
         contentView.setNeedsUpdateConstraints()
-
     }
 
 }

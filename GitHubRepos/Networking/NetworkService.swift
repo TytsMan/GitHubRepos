@@ -34,22 +34,17 @@ class NetworkService {
 
     private static func request<T: Codable>(_ urlConvertible: URLRequestConvertible,
                                             completionHandler: @escaping (Result<T, Error>) -> Void) {
-
         AF.request(urlConvertible)
             .validate()
             .responseDecodable(of: T.self) { (response) in
-
                 switch response.result {
                 case .failure(let error):
                     completionHandler(.failure(error))
-
                 case .success(let value):
                     completionHandler(.success(value))
 
                 }
-
         }
-
     }
 
 }

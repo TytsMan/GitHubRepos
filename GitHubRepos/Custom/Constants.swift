@@ -25,4 +25,5 @@ struct Constants {
     enum ContentType: String {
         case json = "application/json"
     }
+
 }

@@ -9,6 +9,7 @@
 import Foundation
 
 struct UserTDO: Codable {
+
     let login: String
     let userID: Int
     let nodeID: String
@@ -26,4 +27,5 @@ struct UserTDO: Codable {
         case type
         case siteAdmin = "site_admin"
     }
+
 }
